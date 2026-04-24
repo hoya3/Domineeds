@@ -1,16 +1,16 @@
 # Domineeds (도미니즈) 🏠
 
 > **기숙사생을 위한 스마트한 외박 신청 및 관리 플랫폼**  
-> "Dormitory + Needs" - 기숙사 생활의 필수적인 요구사항을 담았습니다.
+> 기존의 번거로운 외박 신청 프로세스를 토스(Toss) 스타일의 직관적인 UI/UX로 재해석하여 편리함을 극대화했습니다.
 
 ---
 
 ## ✨ 주요 기능 (Key Features)
 
-- 📅 **스마트 캘린더 외박 신청**: 직관적인 인터페이스를 통해 최대 7일 이내의 외박을 간편하게 신청할 수 있습니다.
-- 📋 **공지사항 확인**: 기숙사 운영 지침, 방역 일정 등 중요한 소식을 한눈에 확인합니다.
-- 👤 **프로필 관리**: 학생의 소속 학과, 학번, 기숙사 정보를 기반으로 맞춤형 서비스를 제공합니다.
-- 🔒 **안전한 인증**: JWT 기반의 보안 인증 시스템을 통해 개인 정보를 안전하게 보호합니다.
+- 📅 **스마트 캘린더 외박 신청**: 클릭만으로 시작일과 종료일을 선택하는 직관적인 인터페이스를 제공합니다.
+- 📋 **실시간 공지사항**: 기숙사 운영 지침, 방역 일정 등 중요한 소식을 대시보드에서 즉시 확인합니다.
+- 👤 **프로필 자동 매칭**: 학생의 학과, 학번, 기숙사 정보를 기반으로 맞춤형 신청 양식을 구성합니다.
+- 🔒 **안전한 보안**: JWT 기반 인증 시스템을 통해 개인 정보를 안전하게 보호합니다.
 
 ---
 
@@ -19,15 +19,14 @@
 ### Frontend
 - **Framework**: React 18
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS, PostCSS
-- **Design Strategy**: Modern & Premium UI (Glassmorphism, High Contrast)
+- **Styling**: Tailwind CSS, PostCSS (Premium Custom Design)
+- **Design Concept**: Modern & Premium UI (Glassmorphism)
 
 ### Backend
 - **Framework**: FastAPI
 - **Database**: SQLite (SQLAlchemy ORM)
 - **Validation**: Pydantic v2
 - **Authentication**: JWT (python-jose, passlib)
-- **Environment**: Python 3.13+
 
 ---
 
@@ -70,19 +69,13 @@ npm run dev
 
 ```text
 Domineeds/
-├── backend/            # FastAPI 기반 백엔드 서버
-│   ├── app/            # 애플리케이션 코어
-│   │   ├── api/        # API 라우트
-│   │   ├── core/       # 설정 및 보안
-│   │   ├── models/     # DB 모델
-│   │   └── schemas/    # Pydantic 스키마
+├── backend/            # FastAPI 기반 RESTful API 서버
+│   ├── app/            # 애플리케이션 코어 (API, Models, Schemas)
 │   └── tests/          # 테스트 코드
-├── frontend/           # React + Vite 기반 프론트엔드
-│   ├── src/            # 소스 코드
-│   │   ├── assets/     # 정적 파일
-│   │   └── components/ # UI 컴포넌트
-│   └── public/         # 공용 리소스
-└── README.md           # 프로젝트 문서
+├── frontend/           # React + Vite 기반 사용자 인터페이스
+│   ├── src/            # 소스 코드 및 스타일링
+│   └── public/         # 정적 리소스
+└── README.md           # 프로젝트 통합 문서
 ```
 
 ---
