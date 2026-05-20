@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     full_name: Optional[str] = None
     student_id: Optional[str] = None
     room_number: Optional[str] = None
+    dorm_name:   Optional[str] = None
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):

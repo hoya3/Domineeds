@@ -21,6 +21,7 @@ class CRUDUser:
             full_name=obj_in.full_name,
             student_id=obj_in.student_id,
             room_number=obj_in.room_number,
+            dorm_name=obj_in.dorm_name,
             is_superuser=obj_in.is_superuser,
         )
         db.add(db_obj)
@@ -31,6 +32,7 @@ class CRUDUser:
     def authenticate(
         self, db: Session, *, email: str, password: str
     ) -> Optional[User]:
+        """이메일과 비밀번호로 사용자를 인증합니다."""
         user = self.get_by_email(db, email=email)
         if not user:
             return None

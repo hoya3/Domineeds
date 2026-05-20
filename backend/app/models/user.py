@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 
 class User(Base):
@@ -12,3 +13,7 @@ class User(Base):
     # Student specific fields
     student_id = Column(String, unique=True, index=True)
     room_number = Column(String)
+    dorm_name   = Column(String)   # 기숙사 이름
+
+    # Relationships
+    stayouts = relationship("StayOut", back_populates="user")
