@@ -1,26 +1,26 @@
-# Domineeds (도미니즈) 🏠
+# Domineeds (도미니즈)
 
-> **기숙사생을 위한 스마트한 외박 신청 및 관리 플랫폼**  
-> 기존의 번거로운 외박 신청 프로세스를 토스(Toss) 스타일의 직관적인 UI/UX로 재해석하여 편리함을 극대화했습니다.
-
----
-
-## ✨ 주요 기능 (Key Features)
-
-- 📅 **스마트 캘린더 외박 신청**: 클릭만으로 시작일과 종료일을 선택하는 직관적인 인터페이스를 제공합니다.
-- 📋 **실시간 공지사항**: 기숙사 운영 지침, 방역 일정 등 중요한 소식을 대시보드에서 즉시 확인합니다.
-- 👤 **프로필 자동 매칭**: 학생의 학과, 학번, 기숙사 정보를 기반으로 맞춤형 신청 양식을 구성합니다.
-- 🔒 **안전한 보안**: JWT 기반 인증 시스템을 통해 개인 정보를 안전하게 보호합니다.
+> 기숙사생을 위한 외박 신청 및 관리 플랫폼
 
 ---
 
-## 🛠 기술 스택 (Tech Stack)
+## 주요 기능
+
+- **캘린더 외박 신청**: 달력에서 시작일·종료일 클릭으로 신청 완료
+- **신청 완료 날짜 시각화**: 신청된 날짜 범위를 달력에 초록색으로 표시
+- **신청 내역 조회**: 본인 신청 이력 확인 및 취소 가능
+- **공지사항**: 기숙사 운영 공지 확인
+- **관리자 대시보드**: 슈퍼유저 계정으로 전체 신청 현황 조회 및 필터링
+- **JWT 인증**: 로그인·회원가입, 토큰 기반 보안
+
+---
+
+## 기술 스택
 
 ### Frontend
 - **Framework**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS, PostCSS (Premium Custom Design)
-- **Design Concept**: Modern & Premium UI (Glassmorphism)
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS
 
 ### Backend
 - **Framework**: FastAPI
@@ -30,32 +30,37 @@
 
 ---
 
-## 🚀 시작하기 (Getting Started)
+## 시작하기
 
-### Prerequisites
-- Python 3.13+
+### 요구사항
+- Python 3.10+
 - Node.js 18+ & npm
 
-### 1. Backend 설정
+### 1. Backend
+
 ```bash
 cd backend
+
 # 가상환경 생성 및 활성화
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
 # 의존성 설치
 pip install -r requirements.txt
 
 # 환경 변수 설정
-cp .env.example .env  # Windows: copy .env.example .env
+cp .env.example .env             # Windows: copy .env.example .env
+# .env 파일에서 SECRET_KEY 등 값 수정
 
 # 서버 실행
 uvicorn app.main:app --reload
 ```
 
-### 2. Frontend 설정
+### 2. Frontend
+
 ```bash
 cd frontend
+
 # 의존성 설치
 npm install
 
@@ -65,21 +70,32 @@ npm run dev
 
 ---
 
-## 📁 프로젝트 구조 (Project Structure)
+## 프로젝트 구조
 
-```text
+```
 Domineeds/
-├── backend/            # FastAPI 기반 RESTful API 서버
-│   ├── app/            # 애플리케이션 코어 (API, Models, Schemas)
-│   └── tests/          # 테스트 코드
-├── frontend/           # React + Vite 기반 사용자 인터페이스
-│   ├── src/            # 소스 코드 및 스타일링
-│   └── public/         # 정적 리소스
-└── README.md           # 프로젝트 통합 문서
+├── backend/
+│   ├── app/
+│   │   ├── api/          # 라우터 (login, register, stayout, users)
+│   │   ├── core/         # 설정, 보안 (JWT)
+│   │   ├── crud/         # DB CRUD 로직
+│   │   ├── db/           # 세션, 베이스 모델
+│   │   ├── models/       # SQLAlchemy 모델
+│   │   ├── schemas/      # Pydantic 스키마
+│   │   └── main.py       # FastAPI 앱 진입점
+│   ├── tests/
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── api/          # axios 클라이언트 (auth, stayout)
+│   │   ├── App.jsx       # 메인 컴포넌트 (달력, 신청폼, 모달)
+│   │   └── main.jsx
+│   └── package.json
+└── README.md
 ```
 
 ---
 
-## 📄 라이선스 (License)
+## 기숙사 목록
 
-이 프로젝트는 개인 학습 및 기숙사 관리 효율화를 목적으로 제작되었습니다.
+참인재관 · 다솜관 · 세르비레관 · 성김대건관 · 효성관 · 아마레관
