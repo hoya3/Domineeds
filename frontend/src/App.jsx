@@ -15,14 +15,12 @@ const fmt = (d) => d ? `${d.getMonth() + 1}월 ${d.getDate()}일` : '날짜 선�
 
 // ── 상태 배지 설정 ────────────────────────────────────────
 const STATUS_CONFIG = {
-  pending:   { label: '신청 완료', cls: 'bg-blue-50   text-blue-600   border-blue-200'   },
-  approved:  { label: '승인됨',   cls: 'bg-green-50  text-green-600  border-green-200'  },
-  rejected:  { label: '반려됨',   cls: 'bg-red-50    text-red-500    border-red-200'    },
-  cancelled: { label: '취소됨',   cls: 'bg-slate-50  text-slate-400  border-slate-200'  },
+  pending:   { label: '신청 완료', cls: 'bg-blue-50  text-blue-600  border-blue-200'  },
+  cancelled: { label: '취소됨',   cls: 'bg-slate-50 text-slate-400 border-slate-200' },
 };
 
 // ── 기숙사 리스트 ──────────────────────────────────────────────────
-const DORMS = ['참인재관', '다와관', '세르비레관', '성김대건관', '효성관', '아마레관'];
+const DORMS = ['참인재관', '다솜관', '세르비레관', '성김대건관', '효성관', '아마레관'];
 
 // ─────────────────────────────────────────────────────────────
 const DormitoryApp = () => {
@@ -87,10 +85,11 @@ const DormitoryApp = () => {
     return d;
   };
 
-  const isDisabled  = (day) => { const d = toDateObj(calYear, calMonth, day); return d < todayObj || d > limitDate; };
-  const isTodayCell = (day) => calYear === todayObj.getFullYear() && calMonth === todayObj.getMonth() && day === todayObj.getDate();
-  const isSelected  = (day) => { const d = toDateObj(calYear, calMonth, day); return (startDate && d.getTime() === startDate.getTime()) || (endDate && d.getTime() === endDate.getTime()); };
-  const isInRange   = (day) => { if (!startDate || !endDate) return false; const d = toDateObj(calYear, calMonth, day); return d > startDate && d < endDate; };
+  const isDisabled    = (day) => { const d = toDateObj(calYear, calMonth, day); return d < todayObj || d > limitDate; };
+  const isTodayCell   = (day) => calYear === todayObj.getFullYear() && calMonth === todayObj.getMonth() && day === todayObj.getDate();
+  const isSelected    = (day) => { const d = toDateObj(calYear, calMonth, day); return (startDate && d.getTime() === startDate.getTime()) || (endDate && d.getTime() === endDate.getTime()); };
+  const isInRange     = (day) => { if (!startDate || !endDate) return false; const d = toDateObj(calYear, calMonth, day); return d > startDate && d < endDate; };
+  const isSubmitted   = (day) => { const d = toDateObj(calYear, calMonth, day); return submittedRanges.some(r => d >= r.start && d <= r.end); };
 
   const handleDateClick = (day) => {
     if (isDisabled(day)) return;
@@ -104,11 +103,12 @@ const DormitoryApp = () => {
   const nextMonth = () => { if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0); } else setCalMonth(m => m + 1); setStartDate(null); setEndDate(null); };
 
   // ── 신청 폼 ───────────────────────────────────────────────
-  const [destination,   setDestination]   = useState('');
-  const [reason,        setReason]        = useState('');
-  const [submitting,    setSubmitting]    = useState(false);
-  const [submitError,   setSubmitError]   = useState('');
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [destination,     setDestination]     = useState('');
+  const [reason,          setReason]          = useState('');
+  const [submitting,      setSubmitting]      = useState(false);
+  const [submitError,     setSubmitError]     = useState('');
+  const [submitSuccess,   setSubmitSuccess]   = useState(false);
+  const [submittedRanges, setSubmittedRanges] = useState([]);
 
   // ── 신청 내역 ─────────────────────────────────────────────
   const [myStayouts,     setMyStayouts]     = useState([]);
@@ -240,6 +240,7 @@ const DormitoryApp = () => {
         destination: destination.trim(),
         reason:      reason.trim() || undefined,
       });
+      setSubmittedRanges(prev => [...prev, { start: startDate, end: endDate }]);
       setSubmitSuccess(true);
       setStartDate(null);
       setEndDate(null);
@@ -494,16 +495,18 @@ const DormitoryApp = () => {
             {[...Array(firstDayOfWeek)].map((_, i) => <div key={`e-${i}`} className="h-20" />)}
             {[...Array(daysInMonth)].map((_, i) => {
               const day = i + 1;
-              const disabled = isDisabled(day);
-              const selected = isSelected(day);
-              const inRange  = isInRange(day);
-              const today    = isTodayCell(day);
+              const disabled  = isDisabled(day);
+              const selected  = isSelected(day);
+              const inRange   = isInRange(day);
+              const today     = isTodayCell(day);
+              const submitted = isSubmitted(day);
               return (
                 <div key={day} onClick={() => handleDateClick(day)}
                   className={`h-20 flex flex-col items-center justify-center rounded-[15px] transition-all relative
                     ${disabled ? 'bg-[#f8fafc] opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-[#f1f5f9]'}
                     ${selected ? 'bg-[#2563eb] !text-white !border-[#2563eb] z-10' : 'text-slate-600'}
                     ${inRange  ? 'bg-[#eff6ff] !text-[#1d4ed8] !rounded-none' : ''}
+                    ${submitted && !selected ? '!bg-green-100 !text-green-700 !border-green-300' : ''}
                     ${today && !selected ? '!border-2 !border-yellow-300' : 'border border-[#f1f5f9]'}
                     font-black text-lg`}
                 >
@@ -630,12 +633,9 @@ const DormitoryApp = () => {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {[
                   { label: '전체 신청', value: adminStayouts.length, cls: 'text-slate-700 bg-white border-slate-200' },
-                  ...DORMS.map(d => ({
-                    label: d,
-                    value: adminStayouts.filter(i => i.user?.dorm_name === d).length,
-                    cls: 'text-blue-700 bg-blue-50 border-blue-200'
-                  }))
-                ].slice(0, 4).map(s => (
+                  { label: '신청 완료', value: adminStayouts.filter(i => i.status === 'pending').length, cls: 'text-blue-700 bg-blue-50 border-blue-200' },
+                  { label: '취소됨',   value: adminStayouts.filter(i => i.status === 'cancelled').length, cls: 'text-slate-600 bg-slate-50 border-slate-200' },
+                ].map(s => (
                   <div key={s.label} className={`p-5 rounded-2xl border shadow-sm text-center ${s.cls}`}>
                     <p className="text-3xl font-black">{s.value}</p>
                     <p className="text-xs font-bold mt-1 opacity-70">{s.label}</p>
@@ -661,6 +661,7 @@ const DormitoryApp = () => {
                   <option value="pending">신청 완료</option>
                   <option value="cancelled">취소됨</option>
                 </select>
+
                 <span className="self-center text-slate-400 font-black text-sm">{filtered.length}건</span>
               </div>
 
@@ -756,17 +757,13 @@ const DormitoryApp = () => {
 
         const FILTER_TABS = [
           { key: 'all',       label: '전체',   count: myStayouts.length },
-          { key: 'pending',   label: '검토 중', count: countOf('pending')   },
-          { key: 'approved',  label: '승인됨',  count: countOf('approved')  },
-          { key: 'rejected',  label: '반려됨',  count: countOf('rejected')  },
+          { key: 'pending',   label: '신청 완료', count: countOf('pending')   },
           { key: 'cancelled', label: '취소됨',  count: countOf('cancelled') },
         ];
 
         const EMPTY_MESSAGES = {
           all:       '아직 외박 신청 내역이 없습니다.',
-          pending:   '검토 중인 신청이 없습니다.',
-          approved:  '승인된 신청이 없습니다.',
-          rejected:  '반려된 신청이 없습니다.',
+          pending:   '신청 완료된 내역이 없습니다.',
           cancelled: '취소된 신청이 없습니다.',
         };
 
@@ -791,12 +788,11 @@ const DormitoryApp = () => {
               ) : (
                 <>
                   {/* 통계 카드 */}
-                  <div className="px-10 py-6 grid grid-cols-4 gap-4 flex-shrink-0">
+                  <div className="px-10 py-6 grid grid-cols-3 gap-4 flex-shrink-0">
                     {[
-                      { label: '전체',   value: myStayouts.length,   color: 'bg-slate-50  border-slate-200  text-slate-700'  },
-                      { label: '검토 중', value: countOf('pending'),   color: 'bg-yellow-50 border-yellow-200 text-yellow-600' },
-                      { label: '승인됨',  value: countOf('approved'),  color: 'bg-green-50  border-green-200  text-green-600'  },
-                      { label: '반려됨',  value: countOf('rejected'),  color: 'bg-red-50    border-red-200    text-red-500'    },
+                      { label: '전체',     value: myStayouts.length,    color: 'bg-slate-50 border-slate-200 text-slate-700' },
+                      { label: '신청 완료', value: countOf('pending'),   color: 'bg-blue-50  border-blue-200  text-blue-600'  },
+                      { label: '취소됨',   value: countOf('cancelled'), color: 'bg-slate-50 border-slate-200 text-slate-400' },
                     ].map(s => (
                       <div key={s.label} className={`p-4 rounded-2xl border text-center ${s.color}`}>
                         <p className="text-2xl font-black">{s.value}</p>
